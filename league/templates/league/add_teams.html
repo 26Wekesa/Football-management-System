@@ -1,0 +1,61 @@
+{% extends 'league/base.html' %}
+{% block title %}Manage Teams — {{ league.name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2><i class="bi bi-people-fill text-success"></i> {{ league.name }} — Teams</h2>
+  <a href="{% url 'league_detail' league.slug %}" class="btn btn-outline-secondary btn-sm">← Back to League</a>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-5">
+    <div class="card shadow-sm">
+      <div class="card-header fw-bold">Add a Team</div>
+      <div class="card-body">
+        <form method="POST">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label">Team Name</label>
+            {{ form.name }}
+          </div>
+          <button type="submit" class="btn btn-success w-100">
+            <i class="bi bi-plus-circle"></i> Add Team
+          </button>
+        </form>
+      </div>
+    </div>
+
+    {% if teams.count >= 2 %}
+      <div class="card shadow-sm mt-3 border-warning">
+        <div class="card-body text-center">
+          <h6 class="fw-bold">Ready to generate fixtures?</h6>
+          <p class="small text-muted">{{ teams.count }} teams added. This will replace any existing fixtures.</p>
+          <a href="{% url 'generate_fixtures' league.slug %}" class="btn btn-warning fw-bold"
+             onclick="return confirm('Generate fixtures? Existing ones will be deleted.')">
+            <i class="bi bi-shuffle"></i> Randomize Fixtures
+          </a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-7">
+    <div class="card shadow-sm">
+      <div class="card-header fw-bold">Teams ({{ teams.count }})</div>
+      <ul class="list-group list-group-flush">
+        {% for team in teams %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-shield-fill text-success me-2"></i>{{ team.name }}</span>
+            <a href="{% url 'delete_team' league.slug team.id %}"
+               class="btn btn-outline-danger btn-sm"
+               onclick="return confirm('Remove {{ team.name }}?')">
+              <i class="bi bi-trash"></i>
+            </a>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">No teams added yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

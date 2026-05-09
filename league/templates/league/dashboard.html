@@ -1,0 +1,42 @@
+{% extends 'league/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2><i class="bi bi-grid-fill text-warning"></i> My Leagues</h2>
+  <a href="{% url 'create_league' %}" class="btn btn-success">
+    <i class="bi bi-plus-lg"></i> New League
+  </a>
+</div>
+
+{% if leagues %}
+  <div class="row g-3">
+    {% for league in leagues %}
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body">
+            <h5 class="card-title fw-bold">
+              <i class="bi bi-trophy text-warning"></i> {{ league.name }}
+            </h5>
+            <p class="text-muted mb-1 small">Season: {{ league.season }}</p>
+            <p class="text-muted mb-1 small">Teams: {{ league.teams.count }}</p>
+            <p class="text-muted mb-2 small">Fixtures: {{ league.fixtures.count }}</p>
+            <a href="{% url 'league_detail' league.slug %}" class="btn btn-outline-success btn-sm me-2">
+              <i class="bi bi-eye"></i> View
+            </a>
+            <a href="{% url 'add_teams' league.slug %}" class="btn btn-outline-secondary btn-sm">
+              <i class="bi bi-people"></i> Teams
+            </a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="text-center py-5 text-muted">
+    <div class="display-3">🏟️</div>
+    <h4>No leagues yet.</h4>
+    <p>Create your first league and start managing results!</p>
+    <a href="{% url 'create_league' %}" class="btn btn-success">Create League</a>
+  </div>
+{% endif %}
+{% endblock %}

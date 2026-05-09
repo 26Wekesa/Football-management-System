@@ -1,0 +1,39 @@
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fa;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.navbar-brand {
+  letter-spacing: 0.5px;
+}
+
+.card {
+  border-radius: 12px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08) !important;
+}
+
+.table th, .table td {
+  vertical-align: middle;
+}
+
+.badge.fs-6 {
+  letter-spacing: 2px;
+  padding: 6px 12px;
+}
+
+footer {
+  margin-top: auto;
+  font-size: 0.85rem;
+}
+
+.btn {
+  border-radius: 8px;
+}

@@ -1,0 +1,55 @@
+{% extends 'league/base.html' %}
+{% block title %}Enter Result{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card shadow-sm">
+      <div class="card-header bg-success text-white fw-bold">
+        <i class="bi bi-pencil-square"></i> Enter Result — Matchweek {{ fixture.matchweek }}
+      </div>
+      <div class="card-body p-4">
+        <div class="text-center mb-4">
+          <h4 class="fw-bold">
+            {{ fixture.home_team.name }}
+            <span class="text-muted mx-2">vs</span>
+            {{ fixture.away_team.name }}
+          </h4>
+          <span class="badge bg-secondary">Matchweek {{ fixture.matchweek }}</span>
+        </div>
+
+        <form method="POST">
+          {% csrf_token %}
+          <div class="row align-items-center g-2 mb-3">
+            <div class="col-5 text-center">
+              <label class="form-label fw-semibold">{{ fixture.home_team.name }}</label>
+              {{ form.home_score }}
+            </div>
+            <div class="col-2 text-center fs-4 fw-bold text-muted">–</div>
+            <div class="col-5 text-center">
+              <label class="form-label fw-semibold">{{ fixture.away_team.name }}</label>
+              {{ form.away_score }}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Date Played (optional)</label>
+            {{ form.played_on }}
+          </div>
+
+          {% if form.errors %}
+            <div class="alert alert-danger small">
+              {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+              {% for field in form %}{% for error in field.errors %}{{ error }}{% endfor %}{% endfor %}
+            </div>
+          {% endif %}
+
+          <button type="submit" class="btn btn-success w-100 mt-2 fw-bold">
+            <i class="bi bi-check-circle"></i> Save Result
+          </button>
+        </form>
+        <a href="{% url 'league_detail' league.slug %}" class="btn btn-link w-100 mt-1">← Back</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

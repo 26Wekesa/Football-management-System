@@ -1,0 +1,136 @@
+{% extends 'league/base.html' %}
+{% block title %}{{ league.name }}{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+  <div>
+    <h2><i class="bi bi-trophy-fill text-warning"></i> {{ league.name }}</h2>
+    <small class="text-muted">Season: {{ league.season }} &nbsp;|&nbsp; Teams: {{ total_teams }} &nbsp;|&nbsp;
+      Played: {{ played }} &nbsp;|&nbsp; Remaining: {{ remaining }}</small>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{% url 'add_teams' league.slug %}" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-people"></i> Teams
+    </a>
+    <a href="{% url 'fixtures' league.slug %}" class="btn btn-outline-primary btn-sm">
+      <i class="bi bi-calendar3"></i> All Fixtures
+    </a>
+    <a href="{% url 'generate_fixtures' league.slug %}" class="btn btn-warning btn-sm"
+       onclick="return confirm('Re-generate all fixtures? Current results will be lost.')">
+      <i class="bi bi-shuffle"></i> Regenerate
+    </a>
+    <a href="{% url 'delete_league' league.slug %}" class="btn btn-outline-danger btn-sm">
+      <i class="bi bi-trash"></i> Delete
+    </a>
+    <a href="{% url 'dashboard' %}" class="btn btn-dark btn-sm">← Dashboard</a>
+</div>
+</div>
+
+<!-- League Table -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header fw-bold bg-dark text-white">
+    <i class="bi bi-table"></i> League Table
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover table-striped mb-0">
+      <thead class="table-dark">
+        <tr>
+          <th>#</th>
+          <th>Team</th>
+          <th title="Played">P</th>
+          <th title="Won">W</th>
+          <th title="Drawn">D</th>
+          <th title="Lost">L</th>
+          <th title="Goals For">GF</th>
+          <th title="Goals Against">GA</th>
+          <th title="Goal Difference">GD</th>
+          <th title="Points" class="fw-bold">PTS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in standings %}
+          <tr {% if forloop.counter <= 4 %}class="table-success"{% elif forloop.counter > standings|length|add:"-3" %}class="table-danger"{% endif %}>
+            <td class="fw-bold">{{ forloop.counter }}</td>
+            <td class="fw-semibold"><i class="bi bi-shield-fill text-success me-1"></i>{{ row.team.name }}</td>
+            <td>{{ row.played }}</td>
+            <td>{{ row.wins }}</td>
+            <td>{{ row.draws }}</td>
+            <td>{{ row.losses }}</td>
+            <td>{{ row.gf }}</td>
+            <td>{{ row.ga }}</td>
+            <td>{% if row.gd > 0 %}+{% endif %}{{ row.gd }}</td>
+            <td class="fw-bold fs-5">{{ row.points }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="10" class="text-center text-muted py-3">No teams yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer small text-muted">
+    <span class="badge bg-success me-1">&nbsp;</span> Top 4 (Champions League spots) &nbsp;
+    <span class="badge bg-danger me-1">&nbsp;</span> Bottom 3 (Relegation zone)
+  </div>
+</div>
+
+<!-- Fixtures by Matchweek -->
+<h4 class="mt-4 mb-3"><i class="bi bi-calendar3"></i> Fixtures & Results</h4>
+
+{% for week, fixtures in matchweeks.items %}
+  <div class="card shadow-sm mb-3">
+    <div class="card-header fw-bold bg-secondary text-white">
+      Matchweek {{ week }}
+    </div>
+    <div class="table-responsive">
+      <table class="table table-bordered mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="text-end">Home</th>
+            <th class="text-center" style="width:100px">Score</th>
+            <th>Away</th>
+            <th class="text-center" style="width:130px">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fixture in fixtures %}
+            <tr>
+              <td class="text-end fw-semibold">{{ fixture.home_team.name }}</td>
+              <td class="text-center">
+                {% if fixture.is_played %}
+                  <span class="badge bg-dark fs-6">{{ fixture.home_score }} – {{ fixture.away_score }}</span>
+                {% else %}
+                  <span class="text-muted">vs</span>
+                {% endif %}
+              </td>
+              <td class="fw-semibold">{{ fixture.away_team.name }}</td>
+              <td class="text-center">
+                {% if fixture.is_played %}
+                  <a href="{% url 'enter_result' league.slug fixture.id %}" class="btn btn-outline-secondary btn-sm me-1" title="Edit">
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                  <a href="{% url 'reset_result' league.slug fixture.id %}" class="btn btn-outline-danger btn-sm"
+                     onclick="return confirm('Clear this result?')" title="Reset">
+                    <i class="bi bi-x-circle"></i>
+                  </a>
+                {% else %}
+                  <a href="{% url 'enter_result' league.slug fixture.id %}" class="btn btn-success btn-sm">
+                    <i class="bi bi-pencil-square"></i> Enter Score
+                  </a>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% empty %}
+  <div class="text-center py-4 text-muted">
+    <p>No fixtures yet. Add teams first, then click <strong>Randomize Fixtures</strong>.</p>
+    <a href="{% url 'add_teams' league.slug %}" class="btn btn-success">
+      <i class="bi bi-people"></i> Add Teams
+    </a>
+  </div>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'league/base.html' %}
+{% block title %}Create League{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-header bg-success text-white fw-bold">
+        <i class="bi bi-trophy-fill"></i> Create New League
+      </div>
+      <div class="card-body p-4">
+        <form method="POST">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label fw-semibold">League Name</label>
+            {{ form.name }}
+            <div class="form-text">Give your league a unique name — it's yours!</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Season</label>
+            {{ form.season }}
+          </div>
+          <button type="submit" class="btn btn-success w-100">
+            <i class="bi bi-check2-circle"></i> Create League
+          </button>
+        </form>
+        <a href="{% url 'dashboard' %}" class="btn btn-link w-100 mt-2">← Back</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

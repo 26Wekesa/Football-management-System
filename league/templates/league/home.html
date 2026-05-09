@@ -1,0 +1,39 @@
+{% extends 'league/base.html' %}
+{% block title %}Home — League Manager{% endblock %}
+{% block content %}
+<div class="text-center py-5">
+  <div class="display-1 mb-3">⚽</div>
+  <h1 class="display-5 fw-bold">Football League Manager</h1>
+  <p class="lead text-muted mb-4">Create leagues, randomize fixtures, and track results — Premier League style.</p>
+  <a href="{% url 'register' %}" class="btn btn-success btn-lg me-3">
+    <i class="bi bi-person-plus"></i> Create Account
+  </a>
+  <a href="{% url 'login' %}" class="btn btn-outline-secondary btn-lg">
+    <i class="bi bi-box-arrow-in-right"></i> Login
+  </a>
+</div>
+
+<div class="row mt-5 text-center g-4">
+  <div class="col-md-4">
+    <div class="card h-100 border-0 shadow-sm p-3">
+      <div class="fs-1">🏆</div>
+      <h5 class="mt-2">Name Your League</h5>
+      <p class="text-muted small">Give your league any name you like — Kibabii Premier League, Sunday Five-a-Side, whatever you want.</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100 border-0 shadow-sm p-3">
+      <div class="fs-1">🎲</div>
+      <h5 class="mt-2">Randomized Fixtures</h5>
+      <p class="text-muted small">Home & away fixtures generated automatically in a fair round-robin format.</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100 border-0 shadow-sm p-3">
+      <div class="fs-1">📊</div>
+      <h5 class="mt-2">Live League Table</h5>
+      <p class="text-muted small">Points, goal difference, wins, losses — updated instantly when you enter results.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

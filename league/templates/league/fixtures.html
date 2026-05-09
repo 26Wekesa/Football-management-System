@@ -1,0 +1,122 @@
+{% extends 'league/base.html' %}
+{% block title %}Fixtures — {{ league.name }}{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="fw-bold">
+    <i class="bi bi-calendar3 text-success me-2"></i>{{ league.name }} — All Fixtures
+  </h2>
+  <div class="d-flex gap-2">
+    <a href="{% url 'generate_fixtures' league.slug %}"
+       class="btn btn-warning btn-sm"
+       onclick="return confirm('Regenerate all fixtures? All current results will be lost.')">
+      <i class="bi bi-shuffle"></i> Regenerate
+    </a>
+    <a href="{% url 'league_detail' league.slug %}" class="btn btn-dark btn-sm">
+      ← Back to League
+    </a>
+  </div>
+</div>
+
+<!-- Summary Bar -->
+<div class="row g-3 mb-4 text-center">
+  <div class="col-4">
+    <div class="card border-0 shadow-sm p-3">
+      <div class="fs-3 fw-bold text-success">{{ total_fixtures }}</div>
+      <div class="small text-muted">Total Fixtures</div>
+    </div>
+  </div>
+  <div class="col-4">
+    <div class="card border-0 shadow-sm p-3">
+      <div class="fs-3 fw-bold text-primary">{{ played }}</div>
+      <div class="small text-muted">Played</div>
+    </div>
+  </div>
+  <div class="col-4">
+    <div class="card border-0 shadow-sm p-3">
+      <div class="fs-3 fw-bold text-warning">{{ remaining }}</div>
+      <div class="small text-muted">Remaining</div>
+    </div>
+  </div>
+</div>
+
+<!-- Fixtures by Matchweek -->
+{% for week, fixtures in matchweeks.items %}
+  <div class="card shadow-sm mb-3">
+    <div class="card-header fw-bold bg-secondary text-white d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-calendar-week me-2"></i>Matchweek {{ week }}</span>
+      <span class="badge bg-light text-dark">{{ fixtures|length }} match{{ fixtures|length|pluralize }}</span>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-bordered mb-0 align-middle">
+        <thead class="table-light">
+          <tr>
+            <th class="text-end">Home Team</th>
+            <th class="text-center" style="width: 120px;">Score</th>
+            <th>Away Team</th>
+            <th class="text-center" style="width: 150px;">Status / Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fixture in fixtures %}
+            <tr>
+              <td class="text-end fw-semibold">
+                <i class="bi bi-shield-fill text-success me-1"></i>
+                {{ fixture.home_team.name }}
+              </td>
+
+              <td class="text-center">
+                {% if fixture.is_played %}
+                  <span class="badge bg-dark fs-6 px-3">
+                    {{ fixture.home_score }} – {{ fixture.away_score }}
+                  </span>
+                {% else %}
+                  <span class="text-muted fst-italic">vs</span>
+                {% endif %}
+              </td>
+
+              <td class="fw-semibold">
+                <i class="bi bi-shield-fill text-secondary me-1"></i>
+                {{ fixture.away_team.name }}
+              </td>
+
+              <td class="text-center">
+                {% if fixture.is_played %}
+                  <span class="badge bg-success me-1">Played</span>
+                  <a href="{% url 'enter_result' league.slug fixture.id %}"
+                     class="btn btn-outline-secondary btn-sm me-1" title="Edit result">
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                  <a href="{% url 'reset_result' league.slug fixture.id %}"
+                     class="btn btn-outline-danger btn-sm"
+                     onclick="return confirm('Clear this result?')"
+                     title="Reset result">
+                    <i class="bi bi-x-circle"></i>
+                  </a>
+                {% else %}
+                  <span class="badge bg-warning text-dark me-1">Pending</span>
+                  <a href="{% url 'enter_result' league.slug fixture.id %}"
+                     class="btn btn-success btn-sm">
+                    <i class="bi bi-pencil-square"></i> Enter Score
+                  </a>
+                {% endif %}
+              </td>
+
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% empty %}
+  <div class="text-center py-5 text-muted">
+    <div class="fs-1 mb-3">📅</div>
+    <h5>No fixtures generated yet.</h5>
+    <p>Go to Teams page, add at least 2 teams, then click Randomize Fixtures.</p>
+    <a href="{% url 'add_teams' league.slug %}" class="btn btn-success mt-2">
+      <i class="bi bi-people"></i> Add Teams
+    </a>
+  </div>
+{% endfor %}
+
+{% endblock %}
